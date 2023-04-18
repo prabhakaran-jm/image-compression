@@ -1,0 +1,24 @@
+name: Image Compression
+
+on:
+  pull_request:
+    paths:
+      - "images/**" # Only trigger the workflow if images are updated
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install TinyPNG CLI
+      run: npm install --global tinify
+
+    - name: Compress images with TinyPNG
+      env:
+        TINIFY_API_KEY: ${{ secrets.TINIFY_API_KEY }}
+      run: |
+        for file in $(find images/ -type f -name "*.png" -o -name "*.jpg"); do
+          tinify "${file}"
+        done
